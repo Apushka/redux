@@ -15,11 +15,11 @@ const taskSlice = createSlice({
       state.entities = action.payload;
       state.isLoading = false;
     },
-    create(state, action) {
+    created(state, action) {
       state.entities.push(action.payload);
       state.isLoading = false;
     },
-    update(state, action) {
+    updated(state, action) {
       const elementIndex = state.entities.findIndex(
         (el) => el.id === action.payload.id
       );
@@ -28,55 +28,56 @@ const taskSlice = createSlice({
         ...action.payload,
       };
     },
-    remove(state, action) {
+    removed(state, action) {
       state.entities = state.entities.filter((t) => t.id !== action.payload.id);
     },
-    loadingStart(state) {
+    loadingStarted(state) {
       state.isLoading = true;
     },
-    loadingEnd(state) {
+    loadingEnded(state) {
       state.isLoading = false;
     },
   },
 });
 
 const { actions, reducer: taskReducer } = taskSlice;
-const { update, remove, received, loadingStart, loadingEnd, create } = actions;
+const { updated, removed, received, loadingStarted, loadingEnded, created } =
+  actions;
 
 export const loadTasks = () => async (dispatch) => {
-  dispatch(loadingStart());
+  dispatch(loadingStarted());
   try {
     const data = await todoService.fetch();
     dispatch(received(data));
   } catch (error) {
-    dispatch(loadingEnd());
+    dispatch(loadingEnded());
     dispatch(setError(error.message));
   }
 };
 
-export const completeTask = (id) => (dispatch, getState) => {
-  return dispatch(update({ id, completed: true }));
+export const completeTask = (id) => (dispatch) => {
+  return dispatch(updated({ id, completed: true }));
 };
 
-export function titleChanged(id) {
-  return update({ id, title: `New title for ${id}` });
+export function changeTitle(id) {
+  return updated({ id, title: `New title for ${id}` });
 }
 
-export function taskDeleted(id) {
-  return remove({ id });
+export function deleteTask(id) {
+  return removed({ id });
 }
 
-export const taskCreated = (title) => async (dispatch) => {
-  dispatch(loadingStart());
+export const createTask = (title) => async (dispatch) => {
+  dispatch(loadingStarted());
   try {
     const data = await todoService.createTask({
       userId: 1,
       title,
       completed: false,
     });
-    dispatch(create(data));
+    dispatch(created(data));
   } catch (error) {
-    dispatch(loadingEnd());
+    dispatch(loadingEnded());
     dispatch(setError(error.message));
   }
 };

@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import {
-  titleChanged,
-  taskDeleted,
+  changeTitle,
+  deleteTask,
   completeTask,
   loadTasks,
   getTasks,
   getTasksIsLoading,
-  taskCreated,
+  createTask,
 } from "./store/task";
 import configureStore from "./store/store";
 import { Provider, useSelector, useDispatch } from "react-redux";
@@ -25,17 +25,13 @@ const App = () => {
     dispatch(loadTasks());
   }, []);
 
-  function changeTitle(taskId) {
-    dispatch(titleChanged(taskId));
-  }
-
-  function deleteTask(taskId) {
-    dispatch(taskDeleted(taskId));
+  function handleTitleChange(taskId) {
+    dispatch(changeTitle(taskId));
   }
 
   function handleCreate() {
     const title = prompt("Введите название задачи");
-    dispatch(taskCreated(title));
+    dispatch(createTask(title));
   }
 
   if (isLoading) {
@@ -58,8 +54,12 @@ const App = () => {
             <button onClick={() => dispatch(completeTask(el.id))}>
               Complete
             </button>
-            <button onClick={() => changeTitle(el.id)}>Change Title</button>
-            <button onClick={() => deleteTask(el.id)}>Delete Task</button>
+            <button onClick={() => handleTitleChange(el.id)}>
+              Change Title
+            </button>
+            <button onClick={() => dispatch(deleteTask(el.id))}>
+              Delete Task
+            </button>
             <hr />
           </li>
         ))}
