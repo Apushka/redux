@@ -16,7 +16,7 @@ const taskSlice = createSlice({
       state.isLoading = false;
     },
     create(state, action) {
-      state.entities.unshift(action.payload);
+      state.entities.push(action.payload);
       state.isLoading = false;
     },
     update(state, action) {
@@ -70,9 +70,9 @@ export const taskCreated = (title) => async (dispatch) => {
   dispatch(loadingStart());
   try {
     const data = await todoService.createTask({
+      userId: 1,
       title,
       completed: false,
-      userId: 1,
     });
     dispatch(create(data));
   } catch (error) {
