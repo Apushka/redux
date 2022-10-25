@@ -13,11 +13,11 @@ const taskSlice = createSlice({
   reducers: {
     received(state, action) {
       state.entities = action.payload;
-      state.isLoading = action.false;
+      state.isLoading = false;
     },
     create(state, action) {
       state.entities.unshift(action.payload);
-      state.isLoading = action.false;
+      state.isLoading = false;
     },
     update(state, action) {
       const elementIndex = state.entities.findIndex(
@@ -76,9 +76,8 @@ export const taskCreated = (title) => async (dispatch) => {
     });
     dispatch(create(data));
   } catch (error) {
-    dispatch(setError(error.message));
-  } finally {
     dispatch(loadingEnd());
+    dispatch(setError(error.message));
   }
 };
 
